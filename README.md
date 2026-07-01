@@ -1,4 +1,4 @@
-# 内容路由器
+# 内容路由器 · Content Router
 
 一份素材进去，多种成品出来。11维内容画像 → 智能推荐 → 调度执行。
 
@@ -32,6 +32,14 @@ python engine.py route 我的文章.md --formats PPT,信息图,公众号文章
 | 🎨 漫画/视觉故事 | baoyu-comic | 案例/故事 |
 | 📧 Newsletter | — | 深度+私密语感 |
 | 🛠️ Skill封装 | — | 方法论/工作流 |
+
+## Hermes 技能安装
+
+```bash
+hermes skills install ./SKILL.md
+```
+
+详见 `SKILL.md` 获取完整使用文档和 API 说明。
 
 ## 许可证
 
