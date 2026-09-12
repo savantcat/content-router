@@ -469,8 +469,9 @@ def main():
         router = ContentRouter()
         result = router.route(args.file,
                               args.formats.split(",") if args.formats else None)
-        print(f"✅ 路由完成，已调度 {len(result['dispatch'])} 个分支")
-        print(f"📄 报告保存至: {router.output_dir / f'router_{result['timestamp']}.json'}")
+        out_name = "router_%s.json" % result["timestamp"]
+        print("✅ 路由完成，已调度 %d 个分支" % len(result["dispatch"]))
+        print("📄 报告保存至: %s" % (router.output_dir / out_name))
         for d in result["dispatch"]:
             print(f"  {d['format']:12s} → 匹配skill: {d['target_skill']}")
 

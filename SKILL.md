@@ -34,50 +34,46 @@ triggers:
 
 ## 快速开始
 
-### 1. 内容画像 + 推荐
+> 全部实现集中在单文件 `engine.py`（纯标准库，零三方依赖）。
+> 仓库内**没有** `scripts/` 子目录，早期文档里的 `scripts/xxx.py` 是错的，以下为实际可跑的用法。
+
+### 1. 内容画像 + 推荐（Python API）
 
 ```python
-from scripts.content_profiler import profile_content
+from engine import profile_content, recommend_formats, format_profile_report, format_recommendation
 
-text = open("我的文章.md").read()
+text = open("我的文章.md", encoding="utf-8").read()
+
 profile = profile_content(text)
-# → {
-#     "word_count": 3200,
-#     "structure_type": "层级框架",
-#     "info_density": 0.72,
-#     "visual_potential": "高",
-#     ...
-# }
+# → {"chinese_chars": 3200, "structure_type": "层级框架", "info_density": 0.72, ...}
+print(format_profile_report(profile))
 
-from scripts.recommender import recommend_formats
-formats = recommend_formats(profile)
-# → ["PPT演示文稿", "信息图", "公众号文章"]
+recs = recommend_formats(profile)
+# → [{"format": "PPT演示文稿", "score": 92, "reason": "..."}, ...]
+print(format_recommendation(recs))
 ```
 
-### 2. 一键调度执行
+### 2. 一键调度
 
 ```python
-from scripts.router import ContentRouter
+from engine import ContentRouter
 
-router = ContentRouter()
-router.route(
-    source_text=text,
-    formats=["PPT", "小红书图文", "信息图"],
-    output_dir="./output"
-)
+router = ContentRouter(output_dir="./router_output")
+result = router.route("我的文章.md", target_formats=["PPT演示文稿", "信息图"])
+# → {"timestamp": ..., "profile": {...}, "dispatch": [{"format":..., "dispatch_prompt":..., "target_skill":...}]}
 ```
+
+> `route()` **不直接调用**外部 Skill —— 它为每个入选形态生成一段 `dispatch_prompt`
+> （交给任意 Agent/LLM 执行）并落盘一份 JSON 报告。因此本仓库可独立运行，无强制依赖。
 
 ### 3. 命令行使用
 
 ```bash
-# 分析内容
-python scripts/content_profiler.py 我的文章.md
+# 分析 + 推荐
+python engine.py analyze 我的文章.md
 
-# 分析+推荐
-python scripts/router.py analyze 我的文章.md
-
-# 分析+推荐+调度
-python scripts/router.py route 我的文章.md --formats PPT,小红书,信息图
+# 分析 + 推荐 + 调度（生成 dispatch 报告）
+python engine.py route 我的文章.md --formats PPT演示文稿,信息图,公众号文章
 ```
 
 ## 11维内容画像系统
@@ -155,8 +151,18 @@ python scripts/router.py route 我的文章.md --formats PPT,小红书,信息图
 
 ## 依赖环境
 
-- Python ≥ 3.9
-- 可选依赖：各输出形态对应的 Hermes Skill
+- **Python ≥ 3.9**（实测：修复前存在 PEP-701 嵌套 f-string，仅 3.12+ 可解析；现已修正，3.9/3.10/3.11 均可正常导入运行）
+- **零三方依赖** —— 核心逻辑为纯标准库，开箱即用
+- **可选**：上表「对应 Skill」列的 5 个工作流（`ppt-director-workflow` / `content-matrix` / `hechenmao-writing-framework` / `beat-plan-video-workflow` / `baoyu-infographic`）为 Hermes Agent 生态内的私有技能，**未随本仓库开源**。
+  - 缺失不影响使用：`route()` 只产出 `dispatch_prompt` 与 `target_skill` 名称，由你自行接上任意 Agent 或手工执行；
+  - 若某分支的技能不在你的环境中，忽略该分支即可，其余分支不受影响。
+
+## 自测
+
+```bash
+python -c "import engine; print(engine.profile_content('测试内容。'*50)['structure_type'])"
+python engine.py analyze README.md
+```
 
 ## 许可证
 
