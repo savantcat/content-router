@@ -9,6 +9,8 @@
 [![Python](https://img.shields.io/badge/python-3.9%2B-green.svg)](engine.py)
 [![Deps](https://img.shields.io/badge/dependencies-zero-success.svg)](requirements.txt)
 
+[![M8ven Verified](https://m8ven.ai/badge/mcp/savantcat/content-router)](https://m8ven.ai/mcp/savantcat/content-router?s=readme)
+
 ---
 
 ## 🚧 先说边界：它管「做成什么」，不管「发到哪」
