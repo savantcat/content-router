@@ -1,0 +1,12 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "cn.savantcat/content-router",
+  "title": "内容路由器 · 素材该做成什么",
+  "description": "给素材做 11 维内容画像，推荐跨媒介输出形态（PPT/信息图/短视频/漫画等 6 种）并给出可执行调度提示词",
+  "version": "1.0.0",
+  "websiteUrl": "https://github.com/savantcat/content-router",
+  "repository": {
+    "url": "https://github.com/savantcat/content-router",
+    "source": "github"
+  }
+}

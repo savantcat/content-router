@@ -155,6 +155,34 @@ router = ContentRouter(output_dir="./router_output")
 result = router.route("我的文章.md", target_formats=["PPT演示文稿", "信息图"])
 ```
 
+## 🔌 作为 MCP 服务调用
+
+`server.py` 把引擎包成标准 **MCP server** —— 别人的 Agent 可以直接调这几个工具，不必读源码、不必抄公式。
+
+```bash
+pip install "mcp>=2.1"
+
+python server.py                                # 本地 stdio（Claude Desktop / Cursor / 任意 MCP 客户端）
+python server.py --transport http --port 8769   # 远程 streamable-http
+python server.py --selftest                     # 不走协议，直接遍历打全部工具
+```
+
+| 工具 | 作用 |
+|:---|:---|
+| `analyze_content` | 11 维画像 + 形态推荐（一次给全，最常用） |
+| `recommend_formats` | 只出排序推荐：适配度% + 命中的判据 |
+| `get_dispatch_prompt` | 为指定形态生成调度提示词（交给任意 Agent 执行） |
+| `list_formats` | 6 种跨媒介输出形态的定义与适用内容 |
+| `profile_schema` | 11 维画像的口径与取值范围 |
+
+客户端配置（stdio）：
+
+```json
+{ "mcpServers": { "content-router": { "command": "python", "args": ["server.py"] } } }
+```
+
+服务端为**纯计算、纯读**：5 个工具的四个 annotation hint 全部声明（`readOnlyHint=true` / `destructiveHint=false` / `idempotentHint=true` / `openWorldHint=false`），不写盘、不发起任何外部请求、不需要 API Key。
+
 ## 💻 命令行
 
 ```bash
@@ -181,6 +209,8 @@ python engine.py batch ./我的素材库 --top 20 --out 产出决策表.md
 
 ```
 engine.py          单文件核心引擎（画像 / 推荐 / 调度 / CLI），纯标准库
+server.py          MCP 服务端（5 个工具，双通道 stdio / streamable-http）
+server.json        MCP 元数据（官方 Registry 格式）
 SKILL.md           Agent 技能定义 + 完整 API 说明
 skill-card.md      技能卡片（用途 / 输出 / 风险）
 _meta.json         元信息

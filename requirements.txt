@@ -1,2 +1,6 @@
-# 暂无额外依赖（纯Python标准库）
-# 各输出形态对应 Skill 需要单独安装
+# 核心引擎（engine.py）零依赖 —— 纯 Python 标准库，clone 下来就能跑。
+# 以下仅在使用 MCP 服务端（server.py）时需要：
+
+mcp>=2.1
+
+# 各输出形态对应的 Agent Skill 需要单独安装（未随本仓库开源）
